@@ -4,7 +4,8 @@ This project shows how to access ERA5 meteorological data from Earthmover's Arra
 
 ## Features
 
-- **Heating Demand Analysis**: Calculate heating degree days for major Texas cities during the winter storm
+- **Spatial analysis**: Plot ERA5 variables globally
+- **Temporal analysis**: Plot timeseries of ERA5 variables at specific locations
 
 ## Quick Start
 
