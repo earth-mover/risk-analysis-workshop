@@ -1,0 +1,18 @@
+[project]
+name = "risk-analysis-workshop"
+version = "0.1.0"
+description = "Earthmover demo for Tech Workshop: Open Data in Applied Risk Analysis"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "arraylake>=0.24.0",
+    "cartopy>=0.25.0",
+    "cf-xarray>=0.10.9",
+    "cftime>=1.6.4.post1",
+    "icechunk>=1.1.5",
+    "marimo>=0.16.1",
+    "matplotlib>=3.10.6",
+    "nbformat>=5.10.4",
+    "xarray>=2025.9.0",
+    "zarr>=3.1.3",
+]
