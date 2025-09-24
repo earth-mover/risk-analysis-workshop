@@ -9,17 +9,20 @@ This project shows how to access ERA5 meteorological data from Earthmover's Arra
 
 ## Quick Start
 
-First [install uv](https://docs.astral.sh/uv/getting-started/installation/), then launch the interactive marimo notebook using uvx:
+First [install uv](https://docs.astral.sh/uv/getting-started/installation/).
+
+Now open your terminal (on Mac just click Apps then search Terminal and click it), then launch the interactive marimo notebook using uvx, by typing this command and hitting enter:
 
 ```bash
 uvx marimo edit --sandbox https://github.com/earth-mover/risk-analysis-workshop/blob/main/era5.py
 ```
 
-then press `n` to say that you trust that we aren't trying to give you a virus.
-Your browser should open a snazzy marimo notebook. 
-Press ctrl-enter to run each cell one-by-one.
+You will need to press `n` then enter to say that you trust that we aren't trying to give you a virus.
 
-Or alternatively install all dependencies locally and run:
+You should see a few packages get downloaded, then your browser should open a snazzy marimo notebook. 
+Press ctrl-enter to run each cell one-by-one to follow the workshop content.
+
+Or alternatively if you prefer, git clone this repo, install all dependencies locally, then run:
 
 ```bash
 uv sync
