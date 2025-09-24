@@ -290,15 +290,11 @@ def _(mo):
     Now let's calculate some quantities related to climate risk.
 
     We'll start with the [wet bulb temperature](https://en.wikipedia.org/wiki/Wet-bulb_temperature), which is a measure of heat stress, particularly for human health and safety. Prolonged periods above a wet bulb temperature of 95°F are likely to be fatal to even fit and healthy humans.
+
+    Let's look at how high the wet bulb temperature got during the [2024 Indian heatwave](https://en.wikipedia.org/wiki/2024_Indian_heat_wave). We'll start by subsetting to a bounding box over India and Bangladesh, and a specific time within the (months-long) heatwave.
     """
     )
     return
-
-
-@app.cell
-def _():
-    from metpy.calc import wet_bulb_temperature
-    return (wet_bulb_temperature,)
 
 
 @app.cell
@@ -307,20 +303,28 @@ def _(ds):
         "longitude": slice(67, 99),
         "latitude": slice(37.5, 5),
     }
+
     ds_india = ds[
         ["sp", "t2", "d2"]  # keep only the variables we need to calculate wet bulb temperature
     ].sel(
         **india_bbox, 
         time="2024-05-28T10:00:00",  # subset to a time within the 2024 Indian heatwave
     ).load().pint.quantify()  # use pint-xarray to automatically handle unit conversions
+
     ds_india
     return (ds_india,)
 
 
-@app.cell
-def _(ds_india):
-    ds_india.nbytes / 1e6 * 24
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""Calculating wet-bulb temperature isn't trivial (it requires an iterative algorithm), but luckily the [MetPy package](https://unidata.github.io/MetPy/latest/index.html) conveniently provides an xarray-aware [function](https://unidata.github.io/MetPy/latest/api/generated/metpy.calc.wet_bulb_temperature.html#wet-bulb-temperature) for calculating wet bulb temperature for us.""")
     return
+
+
+@app.cell
+def _():
+    from metpy.calc import wet_bulb_temperature
+    return (wet_bulb_temperature,)
 
 
 @app.cell
@@ -332,6 +336,12 @@ def _(ds_india, pint, wet_bulb_temperature):
     ).pint.to(pint.Unit("degF"))
     wbt
     return (wbt,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""Note: To understand how on earth all the physical units conversions were just magically handled correctly for us there, [read this blog post about `pint-xarray`](https://xarray.dev/blog/introducing-pint-xarray) that I wrote back in 2022.""")
+    return
 
 
 @app.cell
@@ -388,9 +398,6 @@ def _(mo):
       <img src="https://nychazardmitigation.com/wp-content/uploads/2023/01/2024.08.05_12_Heat-Index.png)" alt="Alt text" width="600">
       <figcaption>Heat index table. Source: National Weather Service.</figcaption>
     </figure>
-
-
-
     """
     )
     return
@@ -409,12 +416,6 @@ def _(ds_temporal):
     ds_nyc = ds_temporal[['t2', 'd2']].sel(**nyc_coords, method="nearest").load().pint.quantify()
     ds_nyc
     return (ds_nyc,)
-
-
-@app.cell
-def _(ds_nyc):
-    ds_nyc.nbytes * 144 / 1e6
-    return
 
 
 @app.cell(hide_code=True)
@@ -458,7 +459,14 @@ def _(mo):
 @app.cell
 def _(heat_ind):
     heat_ind_daily_max = heat_ind.coarsen(time=24).max()
+    heat_ind_daily_max.plot()
     return (heat_ind_daily_max,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""That looks sensible - it has the right magnitude, the right units, and shows an annual cycle.""")
+    return
 
 
 @app.cell(hide_code=True)
@@ -467,7 +475,7 @@ def _(mo):
         r"""
     NYC Emergency Management issues a "heat advisory" if the heat index is greater than 95°F for two consecutive days.
 
-    There's another xarray-based open-source package called "xclim" which has a convenient function for calculating the number of days in a year that match this criterion.
+    There is another xarray-based open-source package called [`xclim`](https://xclim.readthedocs.io/en/stable/index.html) which has a [convenient function](https://xclim.readthedocs.io/en/stable/indices.html#xclim.indices.heat_wave_index) for calculating the number of days in a year that match this criterion.
     """
     )
     return
@@ -517,8 +525,8 @@ def _(mo):
 
     We have:
 
-    - Viewed and accessed some ERA5 data in arraylake,
-    - Plotted quantities of interest globally at specific times,
+    - Viewed and accessed a subset of 40TB of ERA5 data in arraylake,
+    - Plotted quantities of interest globally and regionally at specific times,
     - Computed quantities of interest locally over the whole time history.
 
     All of this using open-source packages, accessing Earthmover's public ERA5 Icechunk dataset in the cloud, from your laptop!
