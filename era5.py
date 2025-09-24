@@ -175,7 +175,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## Preciptation
+    ## Precipitation
 
     This dataset has lots of interesting variables, but let's try plotting just one first - precipitation. We can look at the metadata of the `"cp"` variable to confirm that that's the one that represents precipitation.
     """
