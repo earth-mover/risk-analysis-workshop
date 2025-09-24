@@ -4,8 +4,8 @@ This project shows how to access ERA5 meteorological data from Earthmover's Arra
 
 ## Features
 
-- **Spatial analysis**: Plot ERA5 variables globally
-- **Temporal analysis**: Plot timeseries of ERA5 variables at specific locations
+- **Spatial analysis**: Plot ERA5 variables globally and regionally,
+- **Temporal analysis**: Plot timeseries of ERA5 variables at specific locations.
 
 ## Quick Start
 
