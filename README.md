@@ -29,6 +29,10 @@ uv sync
 marimo run era5.py
 ```
 
+## Just show me the notebook
+
+If you just want to see the notebook contents, including the outputs from running it, [click here](https://github.com/earth-mover/risk-analysis-workshop/blob/main/era5.ipynb).
+
 ## Data Sources
 
 - **ERA5 Surface Data**: Accessed via Arraylake from [`earthmover-public/era5-surface-aws`](https://app.earthmover.io/earthmover-public/era5-surface-aws)
