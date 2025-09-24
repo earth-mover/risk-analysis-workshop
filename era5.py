@@ -17,7 +17,7 @@
 
 import marimo
 
-__generated_with = "0.16.1"
+__generated_with = "0.16.2"
 app = marimo.App(width="medium")
 
 
@@ -33,15 +33,9 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""Note that we use the arraylake API to access the data, but every other package we'll use is completely open-source! This gives you an idea of the power of the Xarray ecosystem.""")
-    return
-
-
 @app.cell
 def _():
-    # Marimo notebook
+    # marimo notebook
     import marimo as mo
 
     # Core Earthmover stack
@@ -181,9 +175,9 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    ## Total Cloud Cover
+    ## Preciptation
 
-    This dataset has lots of interesting variables, but let's try plotting just one first - total cloud cover. We can look at the metadata of the tcc variable to confirm that that's the one that represents total cloud cover.
+    This dataset has lots of interesting variables, but let's try plotting just one first - precipitation. We can look at the metadata of the `"cp"` variable to confirm that that's the one that represents precipitation.
     """
     )
     return
@@ -191,27 +185,28 @@ def _(mo):
 
 @app.cell
 def _(ds):
-    ds["tcc"].attrs
+    ds["cp"].attrs
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""Now as this dataset is global, we should pick a map projection, for which we'll use the cartopy library.""")
+    mo.md(r"""Now as this dataset is global, we should pick a map projection, for which we'll use the cartopy library. Let's also pick a date and time to display the data.""")
     return
 
 
 @app.cell
 def _(ccrs, ds):
     p1 = (
-        ds["tcc"]
-        .sel(time="2024-09-23T20:00:00", method="nearest")  # subset to the same date and time last year
+        ds["cp"]
+        .sel(time="2024-09-24T20:00:00", method="nearest")  # subset to the same date and time last year
         .plot(
             subplot_kws={
                 "projection": ccrs.Orthographic(-73.99, 40.73),  # center over NYC
                 "facecolor": "gray"
             },
             transform=ccrs.PlateCarree(),
+            robust=True,
         )
     )
     p1.axes.set_global()
@@ -221,63 +216,13 @@ def _(ccrs, ds):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""Voila! What the clouds over New York looked like on this date and time last year.""")
+    mo.md(r"""Voila! What the convective precipitation looked like globally (centered over New York) on this date and time last year.""")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-    ## Basic arithmetic in Xarray: Vorticity
-
-    Xarray objects support arithmetic operations such as subtraction of array values, and more advanced functions such as differentiation with respect to their coordinates
-
-    For example we can easily compute the atmospheric vorticity from the zonal ("u") and meridonal ("v") wind components.
-    """
-    )
-    return
-
-
-@app.function
-def vorticity(u, v):
-    """
-    Calculate the vertical component of vorticity from horizontal velocity fields u and v.
-    """
-
-    du_dy = u.differentiate("latitude")
-    dv_dx = v.differentiate("longitude")
-
-    return dv_dx - du_dy
-
-
-@app.cell
-def _(ds):
-    vort100 = vorticity(
-        u=ds["u100"].sel(time="2024-09-24T20:00:00", method="nearest"),  # subset to the same date and time last year
-        v=ds["v100"].sel(time="2024-09-24T20:00:00", method="nearest"),  # subset to the same date and time last year
-    )
-    return (vort100,)
-
-
-@app.cell
-def _(ccrs, vort100):
-    p2 = vort100.plot(
-        subplot_kws={
-            "projection": ccrs.Orthographic(-73.99, 40.73),  # center over NYC again
-            "facecolor": "gray"
-        },
-        transform=ccrs.PlateCarree(),
-        robust=True,
-    )
-    p2.axes.set_global()
-    p2.axes.coastlines()
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""Notice that region of high vorticity on the western tip of Cuba - that's [Hurricane Helene](https://en.wikipedia.org/wiki/Hurricane_Helene), which went on to hit the South-Eastern US, causing almost $80 billion in damage.""")
+    mo.md(r"""Notice that region of high precipitation on the western tip of Cuba - that's [Hurricane Helene](https://en.wikipedia.org/wiki/Hurricane_Helene) developing, which went on to hit the South-Eastern US, causing almost $80 billion in damage.""")
     return
 
 
