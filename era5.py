@@ -234,7 +234,7 @@ def _(mo):
 
     Now let's calculate some quantities related to climate risk.
 
-    We'll start with the [wet bulb temperature](https://en.wikipedia.org/wiki/Wet-bulb_temperature), which is a measure of heat stress, particularly for human health and safety. Prolonged periods above a wet bulb temperature of 95°F are likely to be fatal to even fit and healthy humans.
+    We'll start with the [wet bulb temperature](https://en.wikipedia.org/wiki/Wet-bulb_temperature), which is a measure of heat stress, particularly for human health and safety. Prolonged periods above a wet bulb temperature of 95°F are likely to be fatal to [even fit and healthy humans](https://pubmed.ncbi.nlm.nih.gov/34913738/).
 
     Let's look at how high the wet bulb temperature got during the [2024 Indian heatwave](https://en.wikipedia.org/wiki/2024_Indian_heat_wave). We'll start by subsetting to a bounding box over India and Bangladesh, and a specific time within the (months-long) heatwave.
     """
@@ -294,6 +294,7 @@ def _(ccrs, cfeature, wbt):
     p = wbt.plot.contourf(
         subplot_kws={"projection": ccrs.PlateCarree(), "facecolor": "lightgray"},
         transform=ccrs.PlateCarree(),
+        cmap="inferno",
     )
     p.axes.coastlines(resolution='50m')
     p.axes.add_feature(cfeature.BORDERS)
@@ -304,9 +305,11 @@ def _(ccrs, cfeature, wbt):
 def _(mo):
     mo.md(
         r"""
-    If 95F is lethal, then clearly the temperature and humidity was dangerously high over significant areas, particularly in east India and Bangladesh. 
+    If 95F is often lethal without protection, then clearly the temperature and humidity was dangerously high over significant areas, particularly in east India and Bangladesh. These include major populated areas such as Kolkata.
 
     Indeed there were a total of 219 deaths reported from the heat wave, and 25,000 others suffered from heatstroke ([source: wikipedia](https://en.wikipedia.org/wiki/2024_Indian_heat_wave)).
+
+    Note how much lower the wet-bulb temperature is over the Himalayas - altitude reduces both the temperature and the maximum possible humidity.
     """
     )
     return
@@ -418,7 +421,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    NYC Emergency Management issues a "heat advisory" if the heat index is greater than 95°F for two consecutive days.
+    NYC Emergency Management issues a "heat advisory" if the heat index is greater than 95°F for two consecutive days, or greater than 100°F for one day.
 
     There is another xarray-based open-source package called [`xclim`](https://xclim.readthedocs.io/en/stable/index.html) which has a [convenient function](https://xclim.readthedocs.io/en/stable/indices.html#xclim.indices.heat_wave_index) for calculating the number of days in a year that match this criterion.
     """
@@ -434,11 +437,17 @@ def _():
 
 @app.cell
 def _(heat_ind_daily_max, heat_wave_index):
-    heat_wave_index(
+    hwi = heat_wave_index(
         heat_ind_daily_max.pint.dequantify(), 
         thresh='95.0 degF', 
         window=2,
-    ).plot()
+    ) + heat_wave_index(
+        heat_ind_daily_max.pint.dequantify(), 
+        thresh='100.0 degF', 
+        window=1,
+    )
+
+    hwi.plot()
     return
 
 
